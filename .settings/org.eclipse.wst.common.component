@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="EmbeddedDG">
+        <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <property name="context-root" value="EmbeddedDG"/>
+        <property name="java-output-path" value="/EmbeddedDG/build/classes"/>
+    </wb-module>
+</project-modules>

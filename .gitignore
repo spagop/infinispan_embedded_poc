@@ -1,0 +1,8 @@
+*.class
+*~
+~lock.*
+~$*
+.DS_Store
+*.svn/
+gitexclude/
+
