@@ -19,14 +19,18 @@ package org.jboss.gpse.quickstart.dgbean;
 
 import javax.ejb.Stateful;
 
-import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.manager.CacheContainer;
+import org.infinispan.configuration.global.GlobalConfiguration;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.Cache;
 import org.infinispan.eviction.EvictionStrategy;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
+
+
 
 /**
  * A Stateful EJB that starts a cache instance provides and interface for 
@@ -37,21 +41,42 @@ import javax.annotation.Resource;
 @Stateful
 public class DataGridEJB
 {
-//	 Configuration config = new DefaultCacheManager()
-//	.defineConfiguration("custom-cache", new ConfigurationBuilder()
-//	.eviction().strategy(EvictionStrategy.LIRS).maxEntries(10)
-//	.build());
-//	
-//	Cache<Object, Object> c = ((CacheContainer) config).getCache("custom-cache");
+	private Cache<String, Object> cache;
+	private EmbeddedCacheManager manager;
 	
-	@Resource(lookup="java:jboss/infinispan/agilaireCacheContainer")
-  	private org.infinispan.manager.CacheContainer container;
-  	private org.infinispan.Cache<String, Object> cache;
+	public DataGridEJB(){
+		
+		// attempted to use: globalJmxStatistics().cacheManagerName("AgilaireCacheManager")
+		// changed it to
+		// .globalJmxStatistics().disable()
+        
+		System.out.println("\n Building Global Config: ");
+		GlobalConfiguration  globalcfg = new GlobalConfigurationBuilder().transport().clusterName("cluster1").transport(new JGroupsTransport())
+		.addProperty("configurationFile", "jgroups-udp.xml").globalJmxStatistics().disable()
+		.build();
+		
+		System.out.println("Building the configuration next ...");
+		Configuration config = new ConfigurationBuilder()
+		.clustering().cacheMode(CacheMode.DIST_SYNC).sync().replTimeout(20000L).hash().numOwners(2)
+		.eviction().strategy(EvictionStrategy.LIRS).maxEntries(10).build();
+		
+		System.out.println("Creating the cache manager ...");
+		manager = new DefaultCacheManager(globalcfg, config, true);
+		cache = manager.getCache("agilaire-cache");
+		cache.start();
+	}
+	
 
-    @PostConstruct
-    public void postContruct() {
-		this.cache = this.container.getCache();
-    }
+	// Use this when accessing a cache instanciated via the EAP6 server
+//	@Resource(lookup="java:jboss/infinispan/agilaireCacheContainer")
+//  	private org.infinispan.manager.CacheContainer container;
+//  	private org.infinispan.Cache<String, Object> cache;
+//
+//    @PostConstruct
+//    public void postContruct() {
+//		this.cache = this.container.getCache();
+//    }
+	
 	
     /**
      * This test method takes an object and stores in in the Data Grid

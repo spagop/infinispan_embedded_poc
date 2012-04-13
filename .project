@@ -39,5 +39,10 @@
 			<type>2</type>
 			<location>/Users/RHAdmin/JBossProjects/JBossEAP6/jboss-eap-6.0</location>
 		</link>
+		<link>
+			<name>jbossDG6.0.0Beta</name>
+			<type>2</type>
+			<location>/Users/RHAdmin/JBossProjects/jbossDG6.0.0Beta</location>
+		</link>
 	</linkedResources>
 </projectDescription>

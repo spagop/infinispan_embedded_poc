@@ -5,4 +5,4 @@
 .DS_Store
 *.svn/
 gitexclude/
-
+target/
