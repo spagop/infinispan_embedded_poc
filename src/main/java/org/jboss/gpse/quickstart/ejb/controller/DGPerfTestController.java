@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * A simple managed bean that is used to invoke the DataGridEJB and store the response. 
- * The response is obtained byminvoking getMessage().
+ * The response is obtained by invoking getMessage().
  *
  * @author randy.thomas@redhat.com, 2012-04-11
  */
@@ -40,7 +40,7 @@ public class DGPerfTestController implements Serializable {
 	private static final long serialVersionUID = -8339176171754706030L;
 
 	/**
-	 * Injected DataGridEJB client
+	 * Injected Stateful DataGridEJB client
 	 */
 	@EJB
 	private DataGridEJB dataGridEJB;
@@ -49,14 +49,40 @@ public class DGPerfTestController implements Serializable {
 	 * Stores the response from the call to dataGridEJB.storeItem(...)
 	 */
 	private String message;
-
+	
 	/**
-	 * Invoke dataGridEJB.storeItem(...) and store the message
-     *
-     * @param name A value to be used for this test
+	 * Store the number of entries to make into the cache store
 	 */
-	public void setName(String name) {
-		message = dataGridEJB.storeItem(name, "");
+	private int count;
+	
+	/**
+	 * Stores the size of the entries to be inserted from the cache sore on write operations
+	 */
+	private int size;
+	
+	/**
+	 * Invokes the write operation on the dataGridEJG with count for settin the number of 
+	 * entries and size to indicate the size of the entries.
+	 * Returning void causes JSF navigation to remain on the same page
+	 */
+	public void writeEntries()
+	{
+		message += "<\br>" + dataGridEJB.write(count, size);
+	}
+	
+	/**
+	 * Invokes the read operation on the dataGridEJB with count for the maximum number of 
+	 * entries to read.
+	 * Returning void causes JSF navigation to remain on the same page
+	 */
+	public void readEntries()
+	{
+		message += "<\br>" + dataGridEJB.read(count);
+	}
+	
+	public void clearMessages()
+	{
+		message = "";
 	}
 
     /**
@@ -66,6 +92,22 @@ public class DGPerfTestController implements Serializable {
      */
 	public String getMessage() {
 		return message;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 }

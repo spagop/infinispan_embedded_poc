@@ -29,8 +29,7 @@ import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.Cache;
 import org.infinispan.eviction.EvictionStrategy;
 import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
-
-
+import org.jboss.gpse.quickstart.perftest.InfinispanClientAbstract;
 
 /**
  * A Stateful EJB that starts a cache instance provides and interface for 
@@ -39,9 +38,8 @@ import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
  * @author randy.thomas@redhat.com, 2012-04-11
  */
 @Stateful
-public class DataGridEJB
+public class DataGridEJB extends InfinispanClientAbstract
 {
-	private Cache<String, Object> cache;
 	private EmbeddedCacheManager manager;
 	
 	public DataGridEJB(){
@@ -49,6 +47,8 @@ public class DataGridEJB
 		// attempted to use: globalJmxStatistics().cacheManagerName("AgilaireCacheManager")
 		// changed it to
 		// .globalJmxStatistics().disable()
+		
+		super();
         
 		System.out.println("\n Building Global Config: ");
 		GlobalConfiguration  globalcfg = new GlobalConfigurationBuilder().transport().clusterName("cluster1").transport(new JGroupsTransport())
@@ -64,40 +64,6 @@ public class DataGridEJB
 		manager = new DefaultCacheManager(globalcfg, config, true);
 		cache = manager.getCache("agilaire-cache");
 		cache.start();
-	}
-	
-
-	// Use this when accessing a cache instanciated via the EAP6 server
-//	@Resource(lookup="java:jboss/infinispan/agilaireCacheContainer")
-//  	private org.infinispan.manager.CacheContainer container;
-//  	private org.infinispan.Cache<String, Object> cache;
-//
-//    @PostConstruct
-//    public void postContruct() {
-//		this.cache = this.container.getCache();
-//    }
-	
-	
-    /**
-     * This test method takes an object and stores in in the Data Grid
-     *
-     * @param key the identity to be used to store the object
-     * @return the results of the store put command
-     */
-	public String storeItem(String key, Object item) {
-		cache.put(key, key);
-		return "Storing " + key;
-	}
-	
-	/**
-	 * Given the key to an item in the data grid retrieve
-	 * and return the item
-	 * 
-	 * @parma key the identity of the item to be retrieved
-	 * @return the item
-	 */
-	public Object getItem(String key)
-	{
-		return cache.get(key);
+		ready = true;
 	}
 }

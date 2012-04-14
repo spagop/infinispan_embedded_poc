@@ -30,19 +30,26 @@
 
 	<h1>Data Grid Performance Test</h1>
 	<div id="container">
+		<h:form id="testparms">
+			<h:panelGrid columns="3">
+				<h:outputLabel>Number of Entries:</h:outputLabel>
+				<h:inputText id="count" value="#{dgptc.count}" />
+				<h:message for="count" style="color:red" />
+				
+				<h:outputLabel>Entry Size</h:outputLabel>
+				<h:inputText id="size" value="#{dgptc.size}" />
+				<h:message for="size" style="color:red" />
+				
+				<h:commandButton id="add" value="Perform Write Test" action="#{dgptc.writeEntries}"></h:commandButton>
+				<h:commandButton id="read" value="Perform Read Test" action="#{dgptc.readEntries}"></h:commandButton>
+				<h:commandButton id="clear" value="Clear Test Results" action="#{dgptc.clearMessages}"></h:commandButton>
+			</h:panelGrid>
+			
+		</h:form>
 		<h:form id="response">
 			<h:panelGrid columns="2">
 				<h:outputLabel>Response:</h:outputLabel>
 				<h:outputLabel value="#{dgptc.message}" />
-			</h:panelGrid>
-		</h:form>
-		<h:form id="greetForm">
-			<h:panelGrid columns="3">
-				<h:outputLabel>Name:</h:outputLabel>
-				<h:inputText value="#{name}" />
-				<h:commandButton id="add" value="Greet"
-					action="#{dgptc.setName(name)}">
-				</h:commandButton>
 			</h:panelGrid>
 		</h:form>
 	</div>
